@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google-Style Searchable Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #333;
+        }
+
+        #search-bar {
+            margin-bottom: 30px;
+        }
+
+        #search-input {
+            width: 50%;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Fullscreen Image Styles */
+        .fullscreen {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen img {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 8px;
+        }
+
+        .fullscreen .details {
+            color: white;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .fullscreen .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .no-results {
+            font-size: 18px;
+            color: #777;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gallery</h1>
+<div id="search-bar">
+    <input type="text" id="search-input" placeholder="Search images..." onkeyup="filterImages()">
+</div>
+
+<div class="gallery-container" id="gallery-container">
+    <div class="gallery-item" data-title="Beautiful Landscape 1">
+        <img src="Landscape.jpg" alt="Landscape 1">
+    </div>
+    <div class="gallery-item" data-title="Beautiful Beach">
+        <img src="Beach.jpg" alt="Beach">
+    </div>
+    <div class="gallery-item" data-title="Mountain View">
+        <img src="mountain.jpg" alt="Mountain">
+    </div>
+    <div class="gallery-item" data-title="Sunset Over the Lake">
+        <img src="sunset.jpg" alt="Sunset Over the Lake">
+    </div>
+    <div class="gallery-item" data-title="City Skyline at Night">
+        <img src="skylight.jpg" alt="City Skyline">
+    </div>
+</div>
+
+<p class="no-results" id="no-results">No images found matching your search.</p>
+
+<!-- Fullscreen Modal -->
+<div class="fullscreen" id="fullscreen">
+    <span class="close" id="closeFullscreen">&times;</span>
+    <img id="fullscreenImage" src="" alt="Fullscreen Image">
+    <div class="details" id="imageDetails"></div>
+</div>
+
+<script>
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const fullscreen = document.getElementById('fullscreen');
+    const fullscreenImage = document.getElementById('fullscreenImage');
+    const imageDetails = document.getElementById('imageDetails');
+    const closeFullscreen = document.getElementById('closeFullscreen');
+    const noResults = document.getElementById('no-results');
+
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function () {
+            const imgSrc = this.querySelector('img').src;
+            const imgTitle = this.getAttribute('data-title');
+            fullscreenImage.src = imgSrc;
+            imageDetails.textContent = imgTitle;
+            fullscreen.style.display = 'flex';
+        });
+    });
+
+    // Close fullscreen on click of close button
+    closeFullscreen.addEventListener('click', () => {
+        fullscreen.style.display = 'none';
+    });
+
+    // Close fullscreen when clicking outside the image
+    fullscreen.addEventListener('click', (e) => {
+        if (e.target === fullscreen) {
+            fullscreen.style.display = 'none';
+        }
+    });
+
+    function filterImages() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        let matches = 0;
+
+        galleryItems.forEach(item => {
+            const title = item.getAttribute('data-title').toLowerCase();
+            if (title.includes(query)) {
+                item.style.display = 'block';
+                matches++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (matches === 0) {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
